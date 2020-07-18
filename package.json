@@ -69,6 +69,7 @@
         "jsdom": "^15.2.0",
         "mocha": "^6.2.1",
         "reflect-metadata": "^0.1.12",
+        "schema-utils": "^2.7.0",
         "ts-node": "^8.4.1",
         "typescript-eslint-parser": "^18.0.0",
         "zone.js": "^0.8.26"

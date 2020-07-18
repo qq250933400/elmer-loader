@@ -77,6 +77,35 @@ const transformES5Script = function(source: string, matchData: string, options:a
     return source;
 };
 
+const elmerLoadTemplateReplace = (source: string, matches:string[], options:any): any  => {
+    const reg = /(\s{1,}|^)elmerLoadTemplate\(\s*["']([\S]{1,})["']\s*\)/;
+    let resultSource = source;
+    const fileName = this.resourcePath;
+    const filePath = getFilePath(fileName);
+    matches.forEach((matchCode: string) => {
+        const tmpMatch = matchCode.match(reg);
+        if(tmpMatch) {
+            const link = tmpMatch[2];
+            const tFileName = path.resolve(filePath, link);
+            let htmlCode = "";
+            if(fs.existsSync(tFileName)) {
+                htmlCode = fs.readFileSync(tFileName, "utf8");
+                if(options && typeof options.parse === "function") {
+                    htmlCode = options.parse(htmlCode);
+                }
+                // tslint:disable-next-line: no-console
+                console.log("[Template] " + tFileName);
+            } else {
+                console.clear();
+                console.log(filePath, link);
+                htmlCode = `<h5>[ES5]Template Not Found.${tFileName}</h5>`;
+                throw new Error(htmlCode);
+            }
+            resultSource = resultSource.replace(tmpMatch[0], htmlCode);
+        }
+    });
+};
+
 const schema = {
     properties: {
         test: {
@@ -92,6 +121,7 @@ export default function(source:string): string {
     validateOptions(schema, options);
     let updateSource = source;
     let requireMatch = source.match(/require\(\s*[\"]{1}([0-9a-z\/\.\_\-\\]*\.(html|htm))\s*['"]{1}\s*\)/ig);
+    let loadMethodMatch = source.match(/(\s{1,}|^)elmerLoadTemplate\(\s*["']([\S]{1,})["']\s*\)/g);
     if(/\@declareComponent\(\{/img.test(source)) {
         const checkMatch = source.match(/\@declareComponent\([\s\S]*(\s*export\s{1,}class\s{1,}|\s*class\s{1,})/img);
         if(checkMatch) {
@@ -122,7 +152,7 @@ export default function(source:string): string {
                             fCode = options.parse(fCode);
                         }
                     }
-                    source.replace(requireMatch[i], JSON.stringify(fCode));
+                    updateSource = updateSource.replace(requireMatch[i], JSON.stringify(fCode));
                     // tslint:disable-next-line: no-console
                     console.log("[ImportSource] " + fNamePath);
                 }
@@ -133,7 +163,11 @@ export default function(source:string): string {
             fNameReg = null;
             filePath = null;
         }
+        if(loadMethodMatch) {
+            updateSource = elmerLoadTemplateReplace.call(this, loadMethodMatch, loadMethodMatch, options);
+        }
     }
     requireMatch = null;
+    loadMethodMatch = null;
     return updateSource;
 }
