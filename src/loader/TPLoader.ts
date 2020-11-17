@@ -77,7 +77,7 @@ const transformES5Script = function(source: string, matchData: string, options:a
     return source;
 };
 
-const elmerLoadTemplateReplace = (source: string, matches:string[], options:any): any  => {
+const elmerLoadTemplateReplace = function(source: string, matches:string[], options:any): any {
     const reg = /(\s{1,}|^)elmerLoadTemplate\(\s*["']([\S]{1,})["']\s*\)/;
     let resultSource = source;
     const fileName = this.resourcePath;
@@ -96,7 +96,9 @@ const elmerLoadTemplateReplace = (source: string, matches:string[], options:any)
                 // tslint:disable-next-line: no-console
                 console.log("[Template] " + tFileName);
             } else {
+                // tslint:disable-next-line: no-console
                 console.clear();
+                // tslint:disable-next-line: no-console
                 console.log(filePath, link);
                 htmlCode = `<h5>[ES5]Template Not Found.${tFileName}</h5>`;
                 throw new Error(htmlCode);
