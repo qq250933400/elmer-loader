@@ -1,5 +1,15 @@
-import HtmlLoaderPlugin from "./loader/HtmlLoader";
-import TpLoaderPlugin from "./loader/TPLoader";
+import htmlLoader from "./loader/HtmlLoader";
+import tsLoader from "./loader/TPLoader";
+// tslint:disable-next-line: no-implicit-dependencies
+import { getOptions } from "loader-utils";
 
-export const HtmlLoader = HtmlLoaderPlugin;
-export const TpLoader = TpLoaderPlugin;
+
+export default function(source: string):any {
+    const options = getOptions();
+    const fileName = this.resourcePath;
+    if(/\.html/.test(fileName)) {
+        return htmlLoader(source, options);
+    } else {
+        return tsLoader(source, options);
+    }
+}

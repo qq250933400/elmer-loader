@@ -1,5 +1,3 @@
-// tslint:disable: no-implicit-dependencies
-import { getOptions } from "loader-utils";
 // tslint:disable-next-line: no-var-requires
 const validateOptions = require("schema-utils");
 // tslint:enable: no-implicit-dependencies
@@ -13,8 +11,7 @@ const schema = {
     type: "object"
 };
 
-export default function(source:string):string {
-    const options = getOptions(this);
+export default function(source:string, options: any):string {
     const htmlParse = options.parse;
     const isTextMode = /^\<\!--TemplateLoader=Text--\>/.test(source);
     let resultData = "";
