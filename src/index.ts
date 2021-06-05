@@ -5,11 +5,11 @@ import { getOptions } from "loader-utils";
 
 
 export default function(source: string):any {
-    const options = getOptions();
+    const options = getOptions(this);
     const fileName = this.resourcePath;
     if(/\.html/.test(fileName)) {
-        return htmlLoader(source, options);
+        return htmlLoader.call(this, source, options);
     } else {
-        return tsLoader(source, options);
+        return tsLoader.call(this, source, options);
     }
 }
