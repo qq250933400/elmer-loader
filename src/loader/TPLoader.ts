@@ -1,3 +1,5 @@
+import { getOptions } from "loader-utils";
+
 // tslint:disable: no-var-requires
 const fs = require("fs");
 const path = require("path");
@@ -116,7 +118,8 @@ const schema = {
     type: "object"
 };
 
-export default function(source:string, options: any): string {
+export default function(source:string, voptions: any): string {
+    const options = voptions || getOptions(this);
     validateOptions(schema, options);
     let updateSource = source;
     let requireMatch = source.match(/require\(\s*[\"]{1}([0-9a-z\/\.\_\-\\]*\.(html|htm))\s*['"]{1}\s*\)/ig);
